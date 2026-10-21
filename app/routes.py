@@ -38,6 +38,8 @@ def update_pet(pet_id):
     if not pet:
         return jsonify({"error": "not found"}), 404
 
+    if "name" in data and not data["name"]:
+        return jsonify({"error": "name is required", "field": "name"}), 400
     for field in ("name", "kind", "age", "owner"):
         if field in data:
             setattr(pet, field, data[field])
