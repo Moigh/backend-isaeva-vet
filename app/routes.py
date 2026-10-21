@@ -25,7 +25,7 @@ def get_pet(pet_id):
     pet = next((p for p in pets if p["id"] == pet_id), None)
     if pet:
         return jsonify(pet.to_dict()), 200
-    return jsonify({'error': 'comic not found'}), 404
+    return jsonify({'error': 'not found'}), 404
 
 def update_pet(pet_id):
     data = request.get_json(silent=True)
