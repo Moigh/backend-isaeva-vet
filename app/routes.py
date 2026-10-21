@@ -5,6 +5,8 @@ def post_pet():
     data = request.get_json(silent=True)
     if not data:
         return jsonify({"error": "data is required"}), 400
+    elif not data.get("name"):
+        return jsonify({"error": "data is required", "field": "name"}), 400
     pet = Pet(
         data["name"],
         data.get("kind"),
