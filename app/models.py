@@ -1,7 +1,9 @@
+next_id = 1
+pets = []
 class Pet:
     def __init__(self, name, kind, age, owner):
         self.id = next_id
-        next_id += next_id
+        next_id += 1
         self.name = name
         self.kind = kind
         self.age = age
@@ -15,6 +17,3 @@ class Pet:
             "age": self.age,
             "owner": self.owner,
         }
-
-pets = []
-next_id = 1
