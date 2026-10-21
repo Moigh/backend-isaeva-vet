@@ -8,7 +8,7 @@ def post_pet():
     pet = {
         "id": 1,
         "name": data["name"],
-        "species": data.get("species"),
+        "kind": data.get("kind"),
         "age": data.get("age"),
         "owner": data.get("owner"),
     }
@@ -37,7 +37,7 @@ def update_pet(pet_id):
     if not pet:
         return jsonify({"error": "not found"}), 404
 
-    for field in ("name", "species", "age", "owner"):
+    for field in ("name", "kind", "age", "owner"):
         if field in data:
             pet[field] = data[field]
 
