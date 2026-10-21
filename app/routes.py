@@ -5,13 +5,13 @@ def post_pet():
     data = request.get_json(silent=True)
     if not data:
         return jsonify({"error": "data is required"}), 400
-    pet = {
-        "id": 1,
-        "name": data["name"],
-        "kind": data.get("kind"),
-        "age": data.get("age"),
-        "owner": data.get("owner"),
-    }
+    pet = Pet(
+        1,
+        data["name"],
+        data.get("kind"),
+        data.get("age"),
+        data.get("owner")
+    )
     pets.append(pet)
     return jsonify(pet), 201
 
