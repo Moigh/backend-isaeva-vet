@@ -5,10 +5,10 @@
   "missing_id": "999999",
   "list_key": null,
   "create": { 
-    "name": "Bob",
-    "kind": "cat",
+    "name": "Боб",
+    "kind": "кот",
     "age": 3,
-    "owner": "John"
+    "owner": "Иван"
   },
   "update": {
     "age": 5
