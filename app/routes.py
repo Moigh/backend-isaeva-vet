@@ -42,3 +42,13 @@ def update_pet(pet_id):
             pet[field] = data[field]
 
     return jsonify(pet), 200
+
+def delete_pet(pet_id):
+    pet = next((p for p in pets if p["id"] == pet_id), None)
+
+    if not pet:
+        return jsonify({"error": "not found"}), 404
+
+    pets.remove(pet)
+
+    return "", 204
