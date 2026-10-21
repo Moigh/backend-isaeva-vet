@@ -2,6 +2,7 @@ from flask import Flask
 from . import routes
 
 app = Flask(__name__)
+app.json.ensure_ascii = False
 
 # API
 @app.route('/api/pets', methods=['POST'])
