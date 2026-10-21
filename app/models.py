@@ -2,6 +2,7 @@ next_id = 1
 pets = []
 class Pet:
     def __init__(self, name, kind, age, owner):
+        global next_id
         self.id = next_id
         next_id += 1
         self.name = name
