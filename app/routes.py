@@ -6,7 +6,6 @@ def post_pet():
     if not data:
         return jsonify({"error": "data is required"}), 400
     pet = Pet(
-        1,
         data["name"],
         data.get("kind"),
         data.get("age"),
