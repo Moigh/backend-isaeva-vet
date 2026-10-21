@@ -41,7 +41,7 @@ def update_pet(pet_id):
         if field in data:
             setattr(pet, field, data[field])
 
-    return jsonify(pet), 200
+    return jsonify(pet.to_dict()), 200
 
 def delete_pet(pet_id):
     pet = next((p for p in pets if p.id == pet_id), None)
