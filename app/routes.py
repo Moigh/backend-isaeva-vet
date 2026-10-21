@@ -13,7 +13,7 @@ def post_pet():
         data.get("owner")
     )
     pets.append(pet)
-    return jsonify(pet), 201
+    return jsonify(pet.to_dict()), 201
 
 def health():
     return jsonify({"status": "ok"}), 200
