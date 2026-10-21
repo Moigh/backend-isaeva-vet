@@ -39,7 +39,7 @@ def update_pet(pet_id):
 
     for field in ("name", "kind", "age", "owner"):
         if field in data:
-            pet[field] = data[field]
+            setattr(pet, field, data[field])
 
     return jsonify(pet), 200
 
