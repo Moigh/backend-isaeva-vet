@@ -13,5 +13,17 @@
   "update": {
     "age": 5
   },
-  "required_field": "name"
+  "required_field": "name",
+  "errors": [
+    { "body": { "name": "" }, "field": "name" },
+    { "body": { "kind": 123 }, "field": "kind" },
+    { "body": { "age": -1 }, "field": "age" },
+    { "body": { "owner": 123 }, "field": "owner" }
+  ],
+  "filter": {
+    "param": "kind",
+    "value": "кот",
+    "other": "собака"
+  },
+  "openapi_path": "/swagger.yaml"
 }
