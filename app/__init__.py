@@ -1,9 +1,26 @@
-from flask import Flask, request, g
+from flask import Flask, request, g, send_file
 from . import routes
 import time
+from flask_swagger_ui import get_swaggerui_blueprint
 
 app = Flask(__name__)
 app.json.ensure_ascii = False
+
+
+# Swagger UI
+SWAGGER_URL = "/docs"
+API_URL = "/swagger.yaml"
+
+swaggerui_blueprint = get_swaggerui_blueprint(
+    SWAGGER_URL,
+    API_URL,
+    config={"app_name": "Ветклиника API"}
+)
+app.register_blueprint(swaggerui_blueprint, url_prefix=SWAGGER_URL)
+
+@app.route("/swagger.yaml")
+def give_swagger():
+    return send_file("../swagger.yaml")
 
 
 @app.before_request
