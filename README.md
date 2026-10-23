@@ -13,6 +13,9 @@
 ```bash
 git clone https://github.com/Moigh/backend-isaeva-vet
 cd backend_isaeva_vet
+python -m venv .venv
+//Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+.venv\Scripts\activate
 pip install -r requirements.txt
 python main.py
 ```
