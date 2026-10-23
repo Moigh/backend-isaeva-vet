@@ -1,8 +1,20 @@
-from flask import Flask
+from flask import Flask, request, g
 from . import routes
+import time
 
 app = Flask(__name__)
 app.json.ensure_ascii = False
+
+
+@app.before_request
+def start_timer():
+    g.start_time = time.perf_counter()
+
+@app.after_request
+def log_print(response):
+    duration = (time.perf_counter() - g.start_time) * 1000
+    print(f"{request.method} {request.path} {response.status_code} {duration:.2f}ms")
+    return response
 
 # API
 @app.route('/api/pets', methods=['POST'])
