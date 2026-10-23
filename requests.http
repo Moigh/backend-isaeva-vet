@@ -24,6 +24,35 @@ Content-Type: application/json
   "age": 10,
   "owner": "Василиса"
 }
+### создать 3
+POST {{base}}/api/pets
+Content-Type: application/json
+
+{"name": "Барсик", "kind": "кот", "age": 3, "owner": "Иван"}
+
+### создать 4
+POST {{base}}/api/pets
+Content-Type: application/json
+
+{"name": "Мурзик", "kind": "кот", "age": 5, "owner": "Иван"}
+
+### создать 5
+POST {{base}}/api/pets
+Content-Type: application/json
+
+{"name": "Мурка", "kind": "кот", "age": 2, "owner": "Пётр"}
+
+### создать 6
+POST {{base}}/api/pets
+Content-Type: application/json
+
+{"name": "Шарик", "kind": "собака", "age": 4, "owner": "Пётр"}
+
+### создать 7
+POST {{base}}/api/pets
+Content-Type: application/json
+
+{"name": "Рекс", "kind": "собака", "age": 1, "owner": "Анна"}
 
 ### Список
 GET {{base}}/api/pets
@@ -93,4 +122,15 @@ Content-Type: application/json
 { 
   "name": ""
 }
+
+
+### Получить с фильтром
+GET http://localhost:8000/api/pets?kind=собака
+
+### Получить с пагинацией
+GET http://localhost:8000/api/pets?limit=2&offset=4
+
+### Получить с пагинацией и фильтром
+GET http://localhost:8000/api/pets?limit=2&kind=кот
+
 

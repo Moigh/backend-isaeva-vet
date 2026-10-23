@@ -42,7 +42,21 @@ def health():
     return jsonify({"status": "ok"}), 200
 
 def get_pets():
-    return jsonify([p.to_dict() for p in pets]), 200
+    limit = request.args.get("limit", type=int)
+    offset = request.args.get("offset", default=0, type=int)
+
+    result = pets
+
+    for key, value in request.args.items():
+        if key in ("name", "kind", "age", "owner"):
+            result = [p for p in result if str(getattr(p, key, None)) == value]
+
+    if offset:
+        result = result[offset:]
+    if limit is not None:
+        result = result[:limit]
+
+    return jsonify([p.to_dict() for p in result]), 200
 
 def get_pet(pet_id):
     pet = next((p for p in pets if p.id == pet_id), None)
