@@ -49,8 +49,48 @@ GET {{base}}/api/pets/1
 POST {{base}}/api/pets
 Content-Type: application/json
 
+[1, 2]
+
+
+
+### Создать с ошибкой name
+POST {{base}}/api/pets
+Content-Type: application/json
+
+{
+  "kind": "собака",
+  "age": 10,
+  "owner": "Василиса"
+}
+
+### Создать с ошибкой age
+POST {{base}}/api/pets
+Content-Type: application/json
+
+{
+  "name": "Бобик",
+  "kind": "собака",
+  "age": -10,
+  "owner": "Василиса"
+}
+
+
+### Создать с ошибкой owner
+POST {{base}}/api/pets
+Content-Type: application/json
+
+{
+  "name": "Бобик",
+  "kind": "собака",
+  "age": 10,
+  "owner": 10
+}
+
+### Изменить с ошибкой name
+PATCH {{base}}/api/pets/1
+Content-Type: application/json
+
 { 
-  "kind": "орёл",
-  "age": 2,
-  "owner": "Пётр"
+  "name": ""
+}
 
