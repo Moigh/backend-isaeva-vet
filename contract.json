@@ -25,5 +25,5 @@
     "value": "кот",
     "other": "собака"
   },
-  "openapi_path": "/swagger.yaml"
+  "openapi_path": "/openapi.json"
 }

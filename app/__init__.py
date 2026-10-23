@@ -1,4 +1,4 @@
-from flask import Flask, request, g, send_file
+from flask import Flask, request, g
 from . import routes
 import time
 from flask_swagger_ui import get_swaggerui_blueprint
@@ -9,7 +9,7 @@ app.json.ensure_ascii = False
 
 # Swagger UI
 SWAGGER_URL = "/docs"
-API_URL = "/swagger.yaml"
+API_URL = "/openapi.json"
 
 swaggerui_blueprint = get_swaggerui_blueprint(
     SWAGGER_URL,
@@ -18,9 +18,10 @@ swaggerui_blueprint = get_swaggerui_blueprint(
 )
 app.register_blueprint(swaggerui_blueprint, url_prefix=SWAGGER_URL)
 
-@app.route("/swagger.yaml")
-def give_swagger():
-    return send_file("../swagger.yaml")
+@app.route("/openapi.json")
+def serve_openapi():
+    with open("openapi.json", "r", encoding="utf-8") as f:
+        return f.read(), 200, {"Content-Type": "application/json"}
 
 
 @app.before_request
