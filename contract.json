@@ -1,10 +1,29 @@
 {
   "base_url": "http://localhost:8000",
-  "resource": "items",
+  "resource": "pets",
   "id_field": "id",
   "missing_id": "999999",
   "list_key": null,
-  "create": { "title": "Первая запись" },
-  "update": { "title": "Изменённая запись" },
-  "required_field": "title"
+  "create": { 
+    "name": "Боб",
+    "kind": "кот",
+    "age": 3,
+    "owner": "Иван"
+  },
+  "update": {
+    "age": 5
+  },
+  "required_field": "name",
+  "errors": [
+    { "body": { "name": "" }, "field": "name" },
+    { "body": { "kind": 123 }, "field": "kind" },
+    { "body": { "age": -1 }, "field": "age" },
+    { "body": { "owner": 123 }, "field": "owner" }
+  ],
+  "filter": {
+    "param": "kind",
+    "value": "кот",
+    "other": "собака"
+  },
+  "openapi_path": "/openapi.json"
 }

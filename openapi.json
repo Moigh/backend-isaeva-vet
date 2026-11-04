@@ -1,0 +1,148 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Ветклиника API",
+    "version": "1.0"
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "Проверка активности сервера",
+        "responses": {
+          "200": {
+            "description": "Сервер доступен"
+          }
+        }
+      }
+    },
+    "/api/pets": {
+      "get": {
+        "summary": "Список питомцев",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "kind",
+            "in": "query",
+            "description": "Фильтр (Также можно фильтровать по owner и name (существующие поля питомца))",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Список питомцев"
+          }
+        }
+      },
+      "post": {
+        "summary": "Создать питомца",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "kind": {
+                    "type": "string"
+                  },
+                  "age": {
+                    "type": "integer"
+                  },
+                  "owner": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Создан"
+          }
+        }
+      }
+    },
+    "/api/pets/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ],
+      "get": {
+        "summary": "Получить питомца по id",
+        "responses": {
+          "200": {
+            "description": "Питомец с id найден"
+          },
+          "404": {
+            "description": "Питомец с id не найден"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Обновить данные питомца по id",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "kind": {
+                    "type": "string"
+                  },
+                  "age": {
+                    "type": "integer"
+                  },
+                  "owner": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Обновлён"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Удалить питомца по id",
+        "responses": {
+          "204": {
+            "description": "Удалён"
+          }
+        }
+      }
+    }
+  }
+}
