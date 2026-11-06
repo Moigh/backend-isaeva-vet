@@ -57,6 +57,16 @@ erDiagram
     }
 ```
 
+## Индекс
+
+Индекс `ix_visit_pet_id` на `visit.pet_id` (создан миграцией).
+
+Запрос:
+```sql
+EXPLAIN SELECT * FROM visit WHERE pet_id = 1;
+```для маленького кол-ва данных
+SET enable_seqscan = off;
+
 ## Интерфейс
 
 <!-- С лабы 4: скриншот, например ![Интерфейс](docs/screenshot.png) -->
