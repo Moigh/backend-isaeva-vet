@@ -40,14 +40,20 @@ python main.py
 
 ```mermaid
 erDiagram
-    parents ||--o{ children : "имеет"
-    parents {
+    PET ||--o{ VISIT : "has"
+    PET {
         int id PK
-        varchar title
+        string name
+        string kind
+        int age
+        string owner
     }
-    children {
+    VISIT {
         int id PK
-        int parent_id FK
+        int pet_id FK
+        datetime date
+        string reason
+        string diagnosis
     }
 ```
 
