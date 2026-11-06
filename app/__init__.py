@@ -70,3 +70,12 @@ def update_pet(pet_id):
 @app.route("/api/pets/<int:pet_id>", methods=["DELETE"])
 def delete_pet(pet_id):
     return routes.delete_pet(pet_id)
+
+
+@app.route("/api/pets/<int:pet_id>/visits", methods=["GET"])
+def get_visits(pet_id):
+    return routes.get_visits(pet_id)
+
+@app.route("/api/pets/<int:pet_id>/visits", methods=["POST"])
+def post_visit(pet_id):
+    return routes.post_visit(pet_id)
