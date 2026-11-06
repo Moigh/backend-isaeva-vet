@@ -66,6 +66,7 @@ erDiagram
 EXPLAIN SELECT * FROM visit WHERE pet_id = 1;
 \\для маленького кол-ва данных
 SET enable_seqscan = off;
+```
 
 ## Интерфейс
 
