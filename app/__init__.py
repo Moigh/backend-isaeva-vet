@@ -1,10 +1,19 @@
 from flask import Flask, request, g
+from .models import db
 from . import routes
 import time
 from flask_swagger_ui import get_swaggerui_blueprint
+import os
+from dotenv import load_dotenv
+from flask_migrate import Migrate
+
+load_dotenv()
 
 app = Flask(__name__)
 app.json.ensure_ascii = False
+
+app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")
+db.init_app(app)
 
 
 # Swagger UI
@@ -17,6 +26,8 @@ swaggerui_blueprint = get_swaggerui_blueprint(
     config={"app_name": "Ветклиника API"}
 )
 app.register_blueprint(swaggerui_blueprint, url_prefix=SWAGGER_URL)
+
+migrate = Migrate(app, db)
 
 @app.route("/openapi.json")
 def serve_openapi():
@@ -58,3 +69,17 @@ def update_pet(pet_id):
 @app.route("/api/pets/<int:pet_id>", methods=["DELETE"])
 def delete_pet(pet_id):
     return routes.delete_pet(pet_id)
+
+
+@app.route("/api/pets/<int:pet_id>/visits", methods=["GET"])
+def get_visits(pet_id):
+    return routes.get_visits(pet_id)
+
+@app.route("/api/pets/<int:pet_id>/visits", methods=["POST"])
+def post_visit(pet_id):
+    return routes.post_visit(pet_id)
+
+
+@app.route("/api/pets/stats", methods=["GET"])
+def pets_stats():
+    return routes.pets_stats()

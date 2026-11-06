@@ -40,15 +40,32 @@ python main.py
 
 ```mermaid
 erDiagram
-    parents ||--o{ children : "имеет"
-    parents {
+    PET ||--o{ VISIT : "has"
+    PET {
         int id PK
-        varchar title
+        string name
+        string kind
+        int age
+        string owner
     }
-    children {
+    VISIT {
         int id PK
-        int parent_id FK
+        int pet_id FK
+        datetime date
+        string reason
+        string diagnosis
     }
+```
+
+## Индекс
+
+Индекс `ix_visit_pet_id` на `visit.pet_id` (создан миграцией).
+
+Запрос:
+```sql
+SET enable_seqscan = off;
+EXPLAIN SELECT * FROM visit WHERE pet_id = 1;
+\\для маленького кол-ва данных
 ```
 
 ## Интерфейс

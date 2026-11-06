@@ -1,2 +1,7 @@
 Flask
 Flask-swagger-ui
+
+flask-sqlalchemy
+psycopg2-binary
+python-dotenv
+Flask-Migrate
