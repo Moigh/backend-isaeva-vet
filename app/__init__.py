@@ -29,7 +29,7 @@ app.register_blueprint(swaggerui_blueprint, url_prefix=SWAGGER_URL)
 with app.app_context():
     db.create_all()
 
-# API
+
 @app.route("/openapi.json")
 def serve_openapi():
     with open("openapi.json", "r", encoding="utf-8") as f:
