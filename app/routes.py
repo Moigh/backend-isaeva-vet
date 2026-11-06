@@ -1,4 +1,4 @@
-from.models import pets, Pet
+from.models import db, Pet, Visit
 from flask import jsonify, request
 
 def validate_fields(data, partial):
@@ -30,12 +30,13 @@ def post_pet():
     if error:
         return jsonify(error), 400
     pet = Pet(
-        data["name"],
-        data.get("kind"),
-        data.get("age"),
-        data.get("owner")
+        name=data["name"],
+        kind=data.get("kind"),
+        age=data.get("age"),
+        owner=data.get("owner")
     )
-    pets.append(pet)
+    db.session.add(pet)
+    db.session.commit()
     return jsonify(pet.to_dict()), 201
 
 def health():
@@ -45,24 +46,30 @@ def get_pets():
     limit = request.args.get("limit", type=int)
     offset = request.args.get("offset", default=0, type=int)
 
-    result = pets
+    query = Pet.query
 
     for key, value in request.args.items():
-        if key in ("name", "kind", "age", "owner"):
-            result = [p for p in result if str(getattr(p, key, None)) == value]
+        if key in ("name", "kind", "owner"):
+            query = query.filter(getattr(Pet, key) == value)
+        elif key == "age":
+            try:
+                query = query.filter(Pet.age == int(value))
+            except ValueError:
+                pass
 
     if offset:
-        result = result[offset:]
+        query = query.offset(offset)
     if limit is not None:
-        result = result[:limit]
+        query = query.limit(limit)
 
-    return jsonify([p.to_dict() for p in result]), 200
+    pets = query.all()
+    return jsonify([p.to_dict() for p in pets]), 200
 
 def get_pet(pet_id):
-    pet = next((p for p in pets if p.id == pet_id), None)
+    pet = Pet.query.get(pet_id)
     if pet:
         return jsonify(pet.to_dict()), 200
-    return jsonify({'error': 'not found', "field": None}), 404
+    return jsonify({'error': 'not found', "field": "id"}), 404
 
 def update_pet(pet_id):
     data = request.get_json(silent=True)
@@ -72,23 +79,26 @@ def update_pet(pet_id):
     if error:
         return jsonify(error), 400
 
-    pet = next((p for p in pets if p.id == pet_id), None)
+    pet = Pet.query.get(pet_id)
     if not pet:
-        return jsonify({"error": "not found", "field": None}), 404
+        return jsonify({"error": "not found", "field": "id"}), 404
 
     for field in ("name", "kind", "age", "owner"):
         if field in data:
             setattr(pet, field, data[field])
 
+    db.session.commit()
+
     return jsonify(pet.to_dict()), 200
 
 def delete_pet(pet_id):
-    pet = next((p for p in pets if p.id == pet_id), None)
+    pet = Pet.query.get(pet_id)
 
     if not pet:
         return jsonify({"error": "not found", "field": None}), 404
 
-    pets.remove(pet)
+    db.session.delete(pet)
+    db.session.commit()
 
     return "", 204
 
