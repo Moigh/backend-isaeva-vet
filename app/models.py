@@ -27,6 +27,10 @@ class Visit(db.Model):
     reason = db.Column(db.String(200))
     diagnosis = db.Column(db.String(200))
 
+    __table_args__ = (
+        db.Index('ix_visit_pet_id', 'pet_id'),
+    )
+
     def to_dict(self):
         return {
             "id": self.id,
