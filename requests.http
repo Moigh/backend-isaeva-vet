@@ -145,3 +145,9 @@ GET http://localhost:8000/api/pets/3/visits
 
 ### визиты несуществующего питомца → 404
 GET http://localhost:8000/api/pets/999999/visits
+
+### проверка дроптейбл
+POST http://localhost:8000/api/pets
+Content-Type: application/json
+
+{"name": "'); DROP TABLE pet;--", "kind": "кот", "age": 3, "owner": "Иван"}
