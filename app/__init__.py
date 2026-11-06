@@ -1,10 +1,10 @@
 from flask import Flask, request, g
+from .models import db
 from . import routes
 import time
 from flask_swagger_ui import get_swaggerui_blueprint
 import os
 from dotenv import load_dotenv
-from flask_sqlalchemy import SQLAlchemy
 
 load_dotenv()
 
@@ -12,7 +12,7 @@ app = Flask(__name__)
 app.json.ensure_ascii = False
 
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")
-db = SQLAlchemy(app)
+db.init_app(app)
 
 # Swagger UI
 SWAGGER_URL = "/docs"
