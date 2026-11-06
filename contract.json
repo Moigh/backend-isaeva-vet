@@ -25,5 +25,15 @@
     "value": "кот",
     "other": "собака"
   },
-  "openapi_path": "/openapi.json"
+  "openapi_path": "/openapi.json",
+  "text_field": "name",
+  "child": {
+    "resource": "visits",
+    "create": {
+      "date": "2026-10-01T10:00:00",
+      "reason": "Осмотр",
+      "diagnosis": "Здоров"
+    },
+    "parent_field": "pet_id"
+  }
 }
