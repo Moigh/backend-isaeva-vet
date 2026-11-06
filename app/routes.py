@@ -48,11 +48,13 @@ def health():
 def get_pets():
     limit = request.args.get("limit", type=int)
     offset = request.args.get("offset", default=0, type=int)
+
+    query = Pet.query
+
     q = request.args.get("q")
     if q:
         query = query.filter(Pet.name.ilike(f"%{q}%"))
 
-    query = Pet.query
 
     for key, value in request.args.items():
         if key in ("name", "kind", "owner"):
