@@ -127,6 +127,14 @@ def post_visit(pet_id):
     except (ValueError, TypeError):
         return jsonify({"error": "date must be ISO format", "field": "date"}), 400
 
+    # правило: нельзя два визита на одно время
+    existing = Visit.query.filter_by(pet_id=pet_id, date=visit_date).first()
+    if existing:
+        return jsonify({
+            "error": "Pet already has a visit at this time",
+            "field": "date"
+        }), 409
+
     visit = Visit(
         pet_id=pet_id,
         date=visit_date,
