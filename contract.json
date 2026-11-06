@@ -35,5 +35,18 @@
       "diagnosis": "Здоров"
     },
     "parent_field": "pet_id"
+  },
+  "rule": {
+    "description": "Питомца нельзя записать на два визита в одно время",
+    "parent": { "name": "Барсик", "kind": "кот", "age": 3, "owner": "Иван" },
+    "setup": [
+      { "method": "POST", "path": "/api/pets/{id}/visits", "body": { "date": "2026-10-01T10:00:00", "reason": "Осмотр" } }
+    ],
+    "violate": {
+      "method": "POST",
+      "path": "/api/pets/{id}/visits",
+      "body": { "date": "2026-10-01T10:00:00", "reason": "Повтор" }
+    },
+    "expect_status": 409
   }
 }
