@@ -151,3 +151,7 @@ POST http://localhost:8000/api/pets
 Content-Type: application/json
 
 {"name": "'); DROP TABLE pet;--", "kind": "кот", "age": 3, "owner": "Иван"}
+
+
+### список визитов питомца 1
+GET http://localhost:8000/api/pets/stats
