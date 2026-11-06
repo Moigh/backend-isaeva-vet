@@ -134,3 +134,14 @@ GET http://localhost:8000/api/pets?limit=2&offset=4
 GET http://localhost:8000/api/pets?limit=2&kind=кот
 
 
+### создать визит для питомца 1
+POST http://localhost:8000/api/pets/3/visits
+Content-Type: application/json
+
+{"date": "2026-10-01T10:00:00", "reason": "Осмотр", "diagnosis": "Здоров"}
+
+### список визитов питомца 1
+GET http://localhost:8000/api/pets/3/visits
+
+### визиты несуществующего питомца → 404
+GET http://localhost:8000/api/pets/999999/visits
