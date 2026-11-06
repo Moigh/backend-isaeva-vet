@@ -1,15 +1,14 @@
-next_id = 1
-pets = []
-class Pet:
-    def __init__(self, name, kind, age, owner):
-        global next_id
-        self.id = next_id
-        next_id += 1
-        self.name = name
-        self.kind = kind
-        self.age = age
-        self.owner = owner
+from flask_sqlalchemy import SQLAlchemy
 
+db = SQLAlchemy()
+
+class Pet(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    kind = db.Column(db.String(50))
+    age = db.Column(db.Integer)
+    owner = db.Column(db.String(100))
+    
     def to_dict(self):
         return {
             "id": self.id,
