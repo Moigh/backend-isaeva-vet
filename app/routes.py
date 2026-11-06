@@ -1,6 +1,6 @@
 from.models import db, Pet, Visit
 from flask import jsonify, request
-import datetime
+from datetime import datetime
 
 def validate_fields(data, partial, visit=False):
     if not data:
