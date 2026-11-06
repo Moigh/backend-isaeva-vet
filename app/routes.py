@@ -1,6 +1,7 @@
 from.models import db, Pet, Visit
 from flask import jsonify, request
 from datetime import datetime
+from sqlalchemy import func
 
 def validate_fields(data, partial, visit=False):
     if not data:
@@ -145,3 +146,19 @@ def post_visit(pet_id):
         db.session.add(visit)
     
     return jsonify(visit.to_dict()), 201
+
+
+def pets_stats():
+    rows = (
+        db.session.query(
+            func.to_char(Visit.date, 'YYYY-MM').label('month'),
+            func.count(Visit.id).label('visits_count')
+        )
+        .group_by(func.to_char(Visit.date, 'YYYY-MM'))
+        .order_by(func.to_char(Visit.date, 'YYYY-MM'))
+        .all()
+    )
+    return jsonify([
+        {"month": month, "visits_count": count}
+        for month, count in rows
+    ]), 200

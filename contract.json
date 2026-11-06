@@ -48,5 +48,6 @@
       "body": { "date": "2026-10-01T10:00:00", "reason": "Повтор" }
     },
     "expect_status": 409
-  }
+  },
+  "stats_path": "/api/pets/stats"
 }
