@@ -1,28 +1,30 @@
 from.models import db, Pet, Visit
 from flask import jsonify, request
+import datetime
 
-def validate_fields(data, partial):
+def validate_fields(data, partial, visit=False):
     if not data:
         return {"error": "data is required", "field": None}
     if not isinstance(data, dict):
         return {"error": "invalid json", "field": None}
     # name обязательное(не для апдейт), строка, не пустое 
-    if not partial or "name" in data:
-        if not data.get("name") or not isinstance(data["name"], str):
-            return {"error": "name must be a non-empty string", "field": "name"}
-    # kind строка
-    if "kind" in data:
-        if not isinstance(data["kind"], str):
-            return {"error": "kind must be a string", "field": "kind"}
-    # age положительное число
-    if "age" in data:
-        if not isinstance(data["age"], int) or data["age"] < 0:
-            return {"error": "age must be a non-negative integer", "field": "age"}
-    # owner строка
-    if "owner" in data:
-        if not isinstance(data["owner"], str):
-            return {"error": "owner must be a string", "field": "owner"}
-    return None
+    if not visit:
+        if not partial or "name" in data:
+            if not data.get("name") or not isinstance(data["name"], str):
+                return {"error": "name must be a non-empty string", "field": "name"}
+        # kind строка
+        if "kind" in data:
+            if not isinstance(data["kind"], str):
+                return {"error": "kind must be a string", "field": "kind"}
+        # age положительное число
+        if "age" in data:
+            if not isinstance(data["age"], int) or data["age"] < 0:
+                return {"error": "age must be a non-negative integer", "field": "age"}
+        # owner строка
+        if "owner" in data:
+            if not isinstance(data["owner"], str):
+                return {"error": "owner must be a string", "field": "owner"}
+        return None
 
 def post_pet():
     data = request.get_json(silent=True)
@@ -103,3 +105,34 @@ def delete_pet(pet_id):
     return "", 204
 
 
+def get_visits(pet_id):
+    pet = Pet.query.get(pet_id)
+    if not pet:
+        return jsonify({"error": "not found", "field": "id"}), 404
+    return jsonify([v.to_dict() for v in pet.visits]), 200
+
+def post_visit(pet_id):
+    pet = Pet.query.get(pet_id)
+    if not pet:
+        return jsonify({"error": "not found", "field": "id"}), 404
+
+    data = request.get_json(silent=True)
+    
+    error = validate_fields(data, True, True)
+    if error:
+        return jsonify(error), 400
+
+    try:
+        visit_date = datetime.fromisoformat(data["date"])
+    except (ValueError, TypeError):
+        return jsonify({"error": "date must be ISO format", "field": "date"}), 400
+
+    visit = Visit(
+        pet_id=pet_id,
+        date=visit_date,
+        reason=data.get("reason"),
+        diagnosis=data.get("diagnosis"),
+    )
+    db.session.add(visit)
+    db.session.commit()
+    return jsonify(visit.to_dict()), 201
