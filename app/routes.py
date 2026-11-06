@@ -112,35 +112,36 @@ def get_visits(pet_id):
     return jsonify([v.to_dict() for v in pet.visits]), 200
 
 def post_visit(pet_id):
-    pet = Pet.query.get(pet_id)
-    if not pet:
-        return jsonify({"error": "not found", "field": "id"}), 404
-
     data = request.get_json(silent=True)
     
     error = validate_fields(data, True, True)
     if error:
         return jsonify(error), 400
 
-    try:
-        visit_date = datetime.fromisoformat(data["date"])
-    except (ValueError, TypeError):
-        return jsonify({"error": "date must be ISO format", "field": "date"}), 400
+    with db.session.begin():
+        pet = Pet.query.get(pet_id)
+        if not pet:
+            return jsonify({"error": "not found", "field": "id"}), 404
 
-    # правило: нельзя два визита на одно время
-    existing = Visit.query.filter_by(pet_id=pet_id, date=visit_date).first()
-    if existing:
-        return jsonify({
-            "error": "Pet already has a visit at this time",
-            "field": "date"
-        }), 409
+        try:
+            visit_date = datetime.fromisoformat(data["date"])
+        except (ValueError, TypeError):
+            return jsonify({"error": "date must be ISO format", "field": "date"}), 400
 
-    visit = Visit(
-        pet_id=pet_id,
-        date=visit_date,
-        reason=data.get("reason"),
-        diagnosis=data.get("diagnosis"),
-    )
-    db.session.add(visit)
-    db.session.commit()
+        # правило: нельзя два визита на одно время
+        existing = Visit.query.filter_by(pet_id=pet_id, date=visit_date).first()
+        if existing:
+            return jsonify({
+                "error": "Pet already has a visit at this time",
+                "field": "date"
+            }), 409
+
+        visit = Visit(
+            pet_id=pet_id,
+            date=visit_date,
+            reason=data.get("reason"),
+            diagnosis=data.get("diagnosis"),
+        )
+        db.session.add(visit)
+    
     return jsonify(visit.to_dict()), 201
