@@ -78,3 +78,8 @@ def get_visits(pet_id):
 @app.route("/api/pets/<int:pet_id>/visits", methods=["POST"])
 def post_visit(pet_id):
     return routes.post_visit(pet_id)
+
+
+@app.route("/api/pets/stats", methods=["GET"])
+def pets_stats():
+    return routes.pets_stats()
