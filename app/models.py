@@ -9,7 +9,7 @@ class Pet(db.Model):
     age = db.Column(db.Integer)
     owner = db.Column(db.String(100))
 
-    visits = db.relationship("Visit", backref="pet", lazy=True)
+    visits = db.relationship("Visit", backref="pet", lazy=True, cascade='all, delete-orphan', passive_deletes=True)
 
     def to_dict(self):
         return {
@@ -22,7 +22,7 @@ class Pet(db.Model):
 
 class Visit(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    pet_id = db.Column(db.Integer, db.ForeignKey("pet.id"), nullable=False)
+    pet_id = db.Column(db.Integer, db.ForeignKey('pet.id', ondelete='CASCADE'), nullable=False)
     date = db.Column(db.DateTime, nullable=False)
     reason = db.Column(db.String(200))
     diagnosis = db.Column(db.String(200))
