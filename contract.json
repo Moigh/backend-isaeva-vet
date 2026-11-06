@@ -49,5 +49,6 @@
     },
     "expect_status": 409
   },
+  "search": { "param": "q", "field": "name" },
   "stats_path": "/api/pets/stats"
 }
