@@ -7,7 +7,7 @@ class Pet(db.Model):
     name = db.Column(db.String(100), nullable=False)
     kind = db.Column(db.String(50))
     age = db.Column(db.Integer)
-    owner = db.Column(db.String(100))
+    owner_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
 
     visits = db.relationship("Visit", backref="pet", lazy=True, cascade='all, delete-orphan', passive_deletes=True)
 
@@ -17,7 +17,7 @@ class Pet(db.Model):
             "name": self.name,
             "kind": self.kind,
             "age": self.age,
-            "owner": self.owner,
+            "owner_id": self.owner_id,
         }
 
 class Visit(db.Model):
@@ -38,4 +38,17 @@ class Visit(db.Model):
             "date": self.date.isoformat() if self.date else None,
             "reason": self.reason,
             "diagnosis": self.diagnosis,
+        }
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    login = db.Column(db.String(80), unique=True, nullable=False)
+    password_hash = db.Column(db.String(255), nullable=False)
+    role = db.Column(db.String(20), default='user', nullable=False)
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "login": self.login,
+            "role": self.role,
         }
