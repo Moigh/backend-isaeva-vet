@@ -1,0 +1,13 @@
+EXPLAIN SELECT * FROM visit WHERE pet_id = 1;
+
+SET enable_seqscan = off;
+
+\set user_name '''); DROP TABLE pet;--'
+SELECT * FROM pet WHERE name = :'user_name';
+
+SELECT to_char(date, 'YYYY-MM') AS month, COUNT(id) AS visits_count
+FROM visit
+GROUP BY to_char(date, 'YYYY-MM')
+ORDER BY to_char(date, 'YYYY-MM');
+
+SELECT * FROM pet WHERE name ILIKE '%барс%';
