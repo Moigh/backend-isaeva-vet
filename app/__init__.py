@@ -80,6 +80,15 @@ def post_visit(pet_id):
     return routes.post_visit(pet_id)
 
 
+@app.route("/auth/register", methods=["POST"])
+def register():
+    return routes.register()
+
+@app.route("/auth/me", methods=["GET"])
+def me():
+    return routes.me()
+
+
 @app.route("/api/pets/stats", methods=["GET"])
 def pets_stats():
     return routes.pets_stats()
