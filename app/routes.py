@@ -1,6 +1,6 @@
 import base64
 import bcrypt
-from models import db, Pet, Visit, User
+from .models import db, Pet, Visit, User
 from flask import jsonify, request
 from datetime import datetime
 from sqlalchemy import func
