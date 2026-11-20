@@ -152,9 +152,10 @@ Content-Type: application/json
 
 {"name": "'); DROP TABLE pet;--", "kind": "кот", "age": 3, "owner": "Иван"}
 
-
 ### статы
 GET http://localhost:8000/api/pets/stats
+
+
 
 ### register — новый юзер
 POST  http://localhost:8000/auth/register
@@ -164,6 +165,17 @@ Content-Type: application/json
   "login": "testuser",
   "password": "testpass",
   "name": "Тестовый"
+}
+
+### создать питомца
+POST http://localhost:8000/api/pets
+Authorization: Basic testuser:testpass
+Content-Type: application/json
+
+{
+  "name": "Барсик",
+  "kind": "кот",
+  "age": 3
 }
 
 ### me — без авторизации (401)
