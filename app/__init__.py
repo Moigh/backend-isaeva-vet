@@ -92,7 +92,7 @@ def me():
     return routes.me()
 
 @app.route("/auth/login", methods=["POST"])
-def login():
+def logging_in():
     return routes.login()
 
 

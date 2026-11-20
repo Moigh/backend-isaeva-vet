@@ -248,7 +248,7 @@ def me():
         return jsonify({"error": "unauthorized", "field": None}), 401
     return jsonify(user.to_dict()), 200
 
-def login():
+def logging_in():
     data = request.get_json(silent=True)
     error, code = validate_user(data)
     if error:
