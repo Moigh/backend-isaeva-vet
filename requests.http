@@ -153,5 +153,55 @@ Content-Type: application/json
 {"name": "'); DROP TABLE pet;--", "kind": "кот", "age": 3, "owner": "Иван"}
 
 
-### список визитов питомца 1
+### статы
 GET http://localhost:8000/api/pets/stats
+
+### register — новый юзер
+POST  http://localhost:8000/auth/register
+Content-Type: application/json
+
+{
+  "login": "testuser",
+  "password": "testpass",
+  "name": "Тестовый"
+}
+
+### me — без авторизации (401)
+GET http://localhost:8000/auth/me
+
+### me — с Basic Auth
+GET http://localhost:8000/auth/me
+Authorization: Basic ivan:pass123
+
+### me — неверный пароль (401)
+GET http://localhost:8000/auth/me
+Authorization: Basic ivan:wrongpass
+
+### pets — фильтр по владельцу
+GET http://localhost:8000/api/pets?owner=ivan
+
+### pets — обновить своего (200)
+PATCH http://localhost:8000/api/pets/77
+Authorization: Basic ivan:pass123
+Content-Type: application/json
+
+{
+  "age": 4
+}
+
+### pets — обновить чужого (403)
+PATCH http://localhost:8000/api/pets/2
+Authorization: Basic ivan:pass123
+Content-Type: application/json
+
+{
+  "age": 4
+}
+
+### pets — удалить чужого (403)
+DELETE http://localhost:8000/api/pets/8
+Authorization: Basic ivan:pass123
+
+### pets — удалить своего (204)
+DELETE http://localhost:8000/api/pets/80
+Authorization: Basic ivan:pass123
