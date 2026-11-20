@@ -58,6 +58,7 @@
     "login_field": "login",
     "password_field": "password",
     "token_field": "access_token",
-    "owner_field": "owner_id"
+    "owner_field": "owner_id",
+    "admin": { "username": "admin", "password": "admin" }
   }
 }

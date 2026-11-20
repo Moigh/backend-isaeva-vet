@@ -47,7 +47,7 @@ def pet_owner_required(f):
         pet = Pet.query.get(pet_id)
         if not pet:
             return jsonify({"error": "not found", "field": None}), 404
-        if pet.owner_id != user.id:
+        if user.role != "admin" and pet.owner_id != user.id:
             return jsonify({"error": "forbidden", "field": None}), 403
 
         g.current_pet = pet
