@@ -93,7 +93,7 @@ def me():
 
 @app.route("/auth/login", methods=["POST"])
 def logging_in():
-    return routes.login()
+    return routes.logging_in()
 
 
 @app.route("/api/pets/stats", methods=["GET"])
