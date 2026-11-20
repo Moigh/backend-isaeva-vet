@@ -2,7 +2,6 @@ import base64
 import bcrypt
 from .models import db, Pet, Visit, User
 from flask import jsonify, request
-from datetime import datetime
 from sqlalchemy import func
 from functools import wraps
 from flask import g
@@ -232,7 +231,7 @@ def register():
     password = data["password"]
     
     if User.query.filter_by(login=login).first():
-        return {"error": "login already exists", "field": "login"}, 409
+        return jsonify({"error": "login already exists", "field": "login"}), 409
 
     user = User(
         login=login,
