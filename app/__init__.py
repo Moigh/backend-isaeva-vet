@@ -63,10 +63,12 @@ def get_pet(pet_id):
     return routes.get_pet(pet_id)
 
 @app.route("/api/pets/<int:pet_id>", methods=["PATCH"])
+@routes.pet_owner_required
 def update_pet(pet_id):
     return routes.update_pet(pet_id)
 
 @app.route("/api/pets/<int:pet_id>", methods=["DELETE"])
+@routes.pet_owner_required
 def delete_pet(pet_id):
     return routes.delete_pet(pet_id)
 
@@ -76,8 +78,22 @@ def get_visits(pet_id):
     return routes.get_visits(pet_id)
 
 @app.route("/api/pets/<int:pet_id>/visits", methods=["POST"])
+@routes.pet_owner_required
 def post_visit(pet_id):
     return routes.post_visit(pet_id)
+
+
+@app.route("/auth/register", methods=["POST"])
+def register():
+    return routes.register()
+
+@app.route("/auth/me", methods=["GET"])
+def me():
+    return routes.me()
+
+@app.route("/auth/login", methods=["POST"])
+def logging_in():
+    return routes.logging_in()
 
 
 @app.route("/api/pets/stats", methods=["GET"])

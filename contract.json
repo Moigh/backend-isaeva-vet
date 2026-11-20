@@ -7,8 +7,7 @@
   "create": { 
     "name": "Боб",
     "kind": "кот",
-    "age": 3,
-    "owner": "Иван"
+    "age": 3
   },
   "update": {
     "age": 5
@@ -17,8 +16,7 @@
   "errors": [
     { "body": { "name": "" }, "field": "name" },
     { "body": { "kind": 123 }, "field": "kind" },
-    { "body": { "age": -1 }, "field": "age" },
-    { "body": { "owner": 123 }, "field": "owner" }
+    { "body": { "age": -1 }, "field": "age" }
   ],
   "filter": {
     "param": "kind",
@@ -38,7 +36,7 @@
   },
   "rule": {
     "description": "Питомца нельзя записать на два визита в одно время",
-    "parent": { "name": "Барсик", "kind": "кот", "age": 3, "owner": "Иван" },
+    "parent": { "name": "Барсик", "kind": "кот", "age": 3},
     "setup": [
       { "method": "POST", "path": "/api/pets/{id}/visits", "body": { "date": "2026-10-01T10:00:00", "reason": "Осмотр" } }
     ],
@@ -50,5 +48,17 @@
     "expect_status": 409
   },
   "search": { "param": "q", "field": "name" },
-  "stats_path": "/api/pets/stats"
+  "stats_path": "/api/pets/stats",
+
+  "auth": {
+    "scheme": "bearer",
+    "register_path": "/auth/register",
+    "login_path": "/auth/login",
+    "me_path": "/auth/me",
+    "login_field": "login",
+    "password_field": "password",
+    "token_field": "access_token",
+    "owner_field": "owner_id",
+    "admin": { "username": "admin", "password": "admin" }
+  }
 }
