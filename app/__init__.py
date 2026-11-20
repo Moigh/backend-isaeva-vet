@@ -91,6 +91,10 @@ def register():
 def me():
     return routes.me()
 
+@app.route("/auth/login", methods=["POST"])
+def login():
+    return routes.login()
+
 
 @app.route("/api/pets/stats", methods=["GET"])
 def pets_stats():

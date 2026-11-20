@@ -217,3 +217,12 @@ Authorization: Basic ivan:pass123
 ### pets — удалить своего (204)
 DELETE http://localhost:8000/api/pets/80
 Authorization: Basic ivan:pass123
+
+### login
+POST http://localhost:5000/auth/login
+Content-Type: application/json
+
+{"login": "ivan", "password": "pass123"}
+
+### me с Bearer
+GET http://localhost:5000/auth/me

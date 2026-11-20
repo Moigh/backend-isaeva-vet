@@ -6,20 +6,35 @@ from datetime import datetime
 from sqlalchemy import func
 from functools import wraps
 from flask import g
+import jwt
+import os
+from datetime import datetime, timezone, timedelta
 
 def get_current_user():
     auth = request.headers.get("Authorization", "")
-    if not auth.startswith("Basic "):
-        return None
-    try:
-        decoded = base64.b64decode(auth[6:]).decode()
-        login, password = decoded.split(":", 1)
-    except Exception:
-        return None
-    user = User.query.filter_by(login=login).first()
-    if not user:
-        return None
-    if not bcrypt.checkpw(password.encode(), user.password_hash.encode()):
+
+    if auth.startswith("Bearer "):
+        try:
+            payload = jwt.decode(
+                auth[7:],
+                os.environ.get("JWT_SECRET"),
+                algorithms=["HS256"]
+            )
+        except jwt.InvalidTokenError:
+            return None
+        user = User.query.get(payload.get("user_id"))
+    elif auth.startswith("Basic "):
+        try:
+            decoded = base64.b64decode(auth[6:]).decode()
+            login, password = decoded.split(":", 1)
+        except Exception:
+            return None
+        user = User.query.filter_by(login=login).first()
+        if not user:
+            return None
+        if not bcrypt.checkpw(password.encode(), user.password_hash.encode()):
+            return None
+    else:
         return None
     return user
 
@@ -79,9 +94,6 @@ def validate_user(data):
         return {"error": "login must be a non-empty string", "field": "login"}, 400
     if not password or not isinstance(password, str):
         return {"error": "password must be a non-empty string", "field": "password"}, 400
-
-    if User.query.filter_by(login=login).first():
-        return {"error": "login already exists", "field": "login"}, 409
 
     return None, None
 
@@ -186,8 +198,6 @@ def post_visit(pet_id):
         return jsonify(error), 400
 
     with db.session.begin():
-        pet = g.current_pet
-
         try:
             visit_date = datetime.fromisoformat(data["date"])
         except (ValueError, TypeError):
@@ -220,6 +230,9 @@ def register():
 
     login = data["login"]
     password = data["password"]
+    
+    if User.query.filter_by(login=login).first():
+        return {"error": "login already exists", "field": "login"}, 409
 
     user = User(
         login=login,
@@ -235,6 +248,30 @@ def me():
     if not user:
         return jsonify({"error": "unauthorized", "field": None}), 401
     return jsonify(user.to_dict()), 200
+
+def login():
+    data = request.get_json(silent=True)
+    error, code = validate_user(data)
+    if error:
+        return jsonify(error), code
+
+    login = data["login"]
+    password = data["password"]
+
+    user = User.query.filter_by(login=login).first()
+    if not user or not bcrypt.checkpw(password.encode(), user.password_hash.encode()):
+        return jsonify({"error": "unauthorized", "field": None}), 401
+
+    expires = int(os.environ.get("JWT_EXPIRES_MIN", 5))
+    token = jwt.encode(
+        {
+            "user_id": user.id,
+            "exp": datetime.now(timezone.utc) + timedelta(minutes=expires)
+        },
+        os.environ.get("JWT_SECRET"),
+        algorithm="HS256"
+    )
+    return jsonify({"access_token": token}), 200
 
 
 def pets_stats():
