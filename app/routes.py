@@ -4,6 +4,42 @@ from .models import db, Pet, Visit, User
 from flask import jsonify, request
 from datetime import datetime
 from sqlalchemy import func
+from functools import wraps
+from flask import g
+
+def get_current_user():
+    auth = request.headers.get("Authorization", "")
+    if not auth.startswith("Basic "):
+        return None
+    try:
+        decoded = base64.b64decode(auth[6:]).decode()
+        login, password = decoded.split(":", 1)
+    except Exception:
+        return None
+    user = User.query.filter_by(login=login).first()
+    if not user:
+        return None
+    if not bcrypt.checkpw(password.encode(), user.password_hash.encode()):
+        return None
+    return user
+
+def pet_owner_required(f):
+    @wraps(f)
+    def wrapper(pet_id, *args, **kwargs):
+        user = get_current_user()
+        if not user:
+            return jsonify({"error": "unauthorized", "field": None}), 401
+
+        pet = Pet.query.get(pet_id)
+        if not pet:
+            return jsonify({"error": "not found", "field": None}), 404
+        if pet.owner_id != user.id:
+            return jsonify({"error": "forbidden", "field": None}), 403
+
+        g.current_pet = pet
+        return f(pet_id, *args, **kwargs)
+    return wrapper
+
 
 def validate(data):
     if not data:
@@ -48,22 +84,6 @@ def validate_user(data):
         return {"error": "login already exists", "field": "login"}, 409
 
     return None, None
-    
-def get_current_user():
-    auth = request.headers.get("Authorization", "")
-    if not auth.startswith("Basic "):
-        return None
-    try:
-        decoded = base64.b64decode(auth[6:]).decode()
-        login, password = decoded.split(":", 1)
-    except Exception:
-        return None
-    user = User.query.filter_by(login=login).first()
-    if not user:
-        return None
-    if not bcrypt.checkpw(password.encode(), user.password_hash.encode()):
-        return None
-    return user
 
 
 def post_pet():
@@ -124,22 +144,14 @@ def get_pet(pet_id):
         return jsonify(pet.to_dict()), 200
     return jsonify({'error': 'not found', "field": "id"}), 404
 
-def update_pet(pet_id):
-    user = get_current_user()
-    if not user:
-        return jsonify({"error": "unauthorized", "field": None}), 401
-
-    pet = Pet.query.get(pet_id)
-    if not pet:
-        return jsonify({"error": "not found", "field": "id"}), 404
-    if pet.owner_id != user.id:
-        return jsonify({"error": "forbidden", "field": None}), 403
-    
+def update_pet(pet_id):    
     data = request.get_json(silent=True)
     error = validate_fields(data, True)
 
     if error:
         return jsonify(error), 400
+
+    pet = g.current_pet
     
     for field in ("name", "kind", "age"):
         if field in data:
@@ -150,15 +162,8 @@ def update_pet(pet_id):
     return jsonify(pet.to_dict()), 200
 
 def delete_pet(pet_id):
-    user = get_current_user()
-    if not user:
-        return jsonify({"error": "unauthorized", "field": None}), 401
     
-    pet = Pet.query.get(pet_id)
-    if not pet:
-        return jsonify({"error": "not found", "field": None}), 404
-    if pet.owner_id != user.id:
-        return jsonify({"error": "forbidden", "field": None}), 403
+    pet = g.current_pet
 
     db.session.delete(pet)
     db.session.commit()
@@ -173,9 +178,6 @@ def get_visits(pet_id):
     return jsonify([v.to_dict() for v in pet.visits]), 200
 
 def post_visit(pet_id):
-    user = get_current_user()
-    if not user:
-        return jsonify({"error": "unauthorized", "field": None}), 401
     
     data = request.get_json(silent=True)
     
@@ -184,9 +186,7 @@ def post_visit(pet_id):
         return jsonify(error), 400
 
     with db.session.begin():
-        pet = Pet.query.get(pet_id)
-        if not pet:
-            return jsonify({"error": "not found", "field": "id"}), 404
+        pet = g.current_pet
 
         try:
             visit_date = datetime.fromisoformat(data["date"])
