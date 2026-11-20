@@ -1,175 +1,47 @@
 @base = http://localhost:8000
+@basic = Basic ivan:pass123
 
-### Сервис жив?
+### health — сервис жив?
 GET {{base}}/health
 
-### Создать1
-POST {{base}}/api/pets
-Content-Type: application/json
 
-{
-  "name": "Мурка",
-  "kind": "кот",
-  "age": 2,
-  "owner": "Пётр"
-}
+# ЧТЕНИЕ (открыто всем)
 
-### Создать2
-POST {{base}}/api/pets
-Content-Type: application/json
-
-{
-  "name": "Бобик",
-  "kind": "собака",
-  "age": 10,
-  "owner": "Василиса"
-}
-### создать 3
-POST {{base}}/api/pets
-Content-Type: application/json
-
-{"name": "Барсик", "kind": "кот", "age": 3, "owner": "Иван"}
-
-### создать 4
-POST {{base}}/api/pets
-Content-Type: application/json
-
-{"name": "Мурзик", "kind": "кот", "age": 5, "owner": "Иван"}
-
-### создать 5
-POST {{base}}/api/pets
-Content-Type: application/json
-
-{"name": "Мурка", "kind": "кот", "age": 2, "owner": "Пётр"}
-
-### создать 6
-POST {{base}}/api/pets
-Content-Type: application/json
-
-{"name": "Шарик", "kind": "собака", "age": 4, "owner": "Пётр"}
-
-### создать 7
-POST {{base}}/api/pets
-Content-Type: application/json
-
-{"name": "Рекс", "kind": "собака", "age": 1, "owner": "Анна"}
-
-### Список
+### список всех питомцев
 GET {{base}}/api/pets
 
-### Получить одну запись
+### получить одного
 GET {{base}}/api/pets/1
 
-### Изменить
-PATCH {{base}}/api/pets/1
-Content-Type: application/json
+### несуществующий
+GET {{base}}/api/pets/999999
 
-{ 
-  "owner": "Лена"
-}
+### фильтр по виду
+GET {{base}}/api/pets?kind=собака
 
-### Удалить
-DELETE {{base}}/api/pets/1
+### фильтр по владельцу (логин)
+GET {{base}}/api/pets?owner=ivan
 
-### После удаления должен быть 404
-GET {{base}}/api/pets/1
+### пагинация
+GET {{base}}/api/pets?limit=2&offset=4
 
-### Сломанный JSON, должен быть 400
+### пагинация + фильтр
+GET {{base}}/api/pets?limit=2&kind=кот
+
+### поиск по имени (q)
+GET {{base}}/api/pets?q=Бар
+
+### список визитов питомца
+GET {{base}}/api/pets/3/visits
+
+### визиты по месяцам
+GET {{base}}/api/pets/stats
+
+
+# СОЗДАНИЕ (нужна авторизация)
+
+### создать без авторизации
 POST {{base}}/api/pets
-Content-Type: application/json
-
-[1, 2]
-
-
-
-### Создать с ошибкой name
-POST {{base}}/api/pets
-Content-Type: application/json
-
-{
-  "kind": "собака",
-  "age": 10,
-  "owner": "Василиса"
-}
-
-### Создать с ошибкой age
-POST {{base}}/api/pets
-Content-Type: application/json
-
-{
-  "name": "Бобик",
-  "kind": "собака",
-  "age": -10,
-  "owner": "Василиса"
-}
-
-
-### Создать с ошибкой owner
-POST {{base}}/api/pets
-Content-Type: application/json
-
-{
-  "name": "Бобик",
-  "kind": "собака",
-  "age": 10,
-  "owner": 10
-}
-
-### Изменить с ошибкой name
-PATCH {{base}}/api/pets/1
-Content-Type: application/json
-
-{ 
-  "name": ""
-}
-
-
-### Получить с фильтром
-GET http://localhost:8000/api/pets?kind=собака
-
-### Получить с пагинацией
-GET http://localhost:8000/api/pets?limit=2&offset=4
-
-### Получить с пагинацией и фильтром
-GET http://localhost:8000/api/pets?limit=2&kind=кот
-
-
-### создать визит для питомца 1
-POST http://localhost:8000/api/pets/3/visits
-Content-Type: application/json
-
-{"date": "2026-10-01T10:00:00", "reason": "Осмотр", "diagnosis": "Здоров"}
-
-### список визитов питомца 1
-GET http://localhost:8000/api/pets/3/visits
-
-### визиты несуществующего питомца → 404
-GET http://localhost:8000/api/pets/999999/visits
-
-### проверка дроптейбл
-POST http://localhost:8000/api/pets
-Content-Type: application/json
-
-{"name": "'); DROP TABLE pet;--", "kind": "кот", "age": 3, "owner": "Иван"}
-
-### статы
-GET http://localhost:8000/api/pets/stats
-
-
-
-### register — новый юзер
-POST  http://localhost:8000/auth/register
-Content-Type: application/json
-
-{
-  "login": "testuser",
-  "password": "testpass",
-  "name": "Тестовый"
-}
-
-### создать питомца
-POST http://localhost:8000/api/pets
-Authorization: Basic testuser:testpass
 Content-Type: application/json
 
 {
@@ -178,51 +50,171 @@ Content-Type: application/json
   "age": 3
 }
 
-### me — без авторизации (401)
-GET http://localhost:8000/auth/me
+### создать с Basic
+POST {{base}}/api/pets
+Authorization: {{basic}}
+Content-Type: application/json
 
-### me — с Basic Auth
-GET http://localhost:8000/auth/me
-Authorization: Basic ivan:pass123
+{
+  "name": "Барсик",
+  "kind": "кот",
+  "age": 3
+}
 
-### me — неверный пароль (401)
-GET http://localhost:8000/auth/me
-Authorization: Basic ivan:wrongpass
+### создать с Bearer 
+POST {{base}}/api/pets
+Authorization: Bearer 
+Content-Type: application/json
 
-### pets — фильтр по владельцу
-GET http://localhost:8000/api/pets?owner=ivan
+{
+  "name": "Мурзик",
+  "kind": "кот",
+  "age": 5
+}
 
-### pets — обновить своего (200)
-PATCH http://localhost:8000/api/pets/77
-Authorization: Basic ivan:pass123
+### создать без name 
+POST {{base}}/api/pets
+Authorization: {{basic}}
+Content-Type: application/json
+
+{
+  "kind": "собака",
+  "age": 10
+}
+
+### создать с отрицательным age 
+POST {{base}}/api/pets
+Authorization: {{basic}}
+Content-Type: application/json
+
+{
+  "name": "Бобик",
+  "kind": "собака",
+  "age": -10
+}
+
+### сломанный JSON 
+POST {{base}}/api/pets
+Authorization: {{basic}}
+Content-Type: application/json
+
+[1, 2]
+
+
+# ИЗМЕНЕНИЕ / УДАЛЕНИЕ (только своё, иначе 403)
+
+### обновить своего (Basic)
+PATCH {{base}}/api/pets/77
+Authorization: {{basic}}
 Content-Type: application/json
 
 {
   "age": 4
 }
 
-### pets — обновить чужого (403)
-PATCH http://localhost:8000/api/pets/2
-Authorization: Basic ivan:pass123
+### обновить чужого 
+PATCH {{base}}/api/pets/2
+Authorization: {{basic}}
 Content-Type: application/json
 
 {
   "age": 4
 }
 
-### pets — удалить чужого (403)
-DELETE http://localhost:8000/api/pets/8
-Authorization: Basic ivan:pass123
+### обновить без авторизации 
+PATCH {{base}}/api/pets/1
+Content-Type: application/json
 
-### pets — удалить своего (204)
-DELETE http://localhost:8000/api/pets/80
-Authorization: Basic ivan:pass123
+{
+  "age": 4
+}
+
+### удалить чужого
+DELETE {{base}}/api/pets/8
+Authorization: {{basic}}
+
+### удалить своего (Bearer) 
+DELETE {{base}}/api/pets/116
+Authorization: Bearer 
+
+### создать визит своему питомцу
+POST {{base}}/api/pets/3/visits
+Authorization: {{basic}}
+Content-Type: application/json
+
+{
+  "date": "2026-10-01T10:00:00",
+  "reason": "Осмотр",
+  "diagnosis": "Здоров"
+}
+
+### тот же слот повторно
+POST {{base}}/api/pets/3/visits
+Authorization: {{basic}}
+Content-Type: application/json
+
+{
+  "date": "2026-10-01T10:00:00",
+  "reason": "Осмотр"
+}
+
+### визит чужому питомцу 
+POST {{base}}/api/pets/2/visits
+Authorization: {{basic}}
+Content-Type: application/json
+
+{
+  "date": "2026-12-01T10:00:00",
+  "reason": "Осмотр"
+}
+
+### визит без авторизации
+POST {{base}}/api/pets/3/visits
+Content-Type: application/json
+
+{
+  "date": "2026-12-02T10:00:00",
+  "reason": "Осмотр"
+}
+
+
+# АУТЕНТИФИКАЦИЯ
+
+### новый юзер
+POST {{base}}/auth/register
+Content-Type: application/json
+
+{
+  "login": "testuser",
+  "password": "testpass",
+  "name": "Тестовый"
+}
 
 ### login
-POST http://localhost:5000/auth/login
+POST {{base}}/auth/login
 Content-Type: application/json
 
-{"login": "ivan", "password": "pass123"}
+{
+  "login": "ivan",
+  "password": "pass123"
+}
 
-### me с Bearer
-GET http://localhost:5000/auth/me
+### неверный пароль 
+POST {{base}}/auth/login
+Content-Type: application/json
+
+{
+  "login": "ivan",
+  "password": "wrongpass"
+}
+
+### me 
+GET {{base}}/auth/me
+
+### me Basic
+GET {{base}}/auth/me
+Authorization: {{basic}}
+
+### me Bearer
+GET {{base}}/auth/me
+Authorization: Bearer token

@@ -51,7 +51,7 @@
   "stats_path": "/api/pets/stats",
 
   "auth": {
-    "scheme": "basic",
+    "scheme": "bearer",
     "register_path": "/auth/register",
     "login_path": "/auth/login",
     "me_path": "/auth/me",

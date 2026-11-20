@@ -8,6 +8,22 @@ from flask import g
 import jwt
 import os
 from datetime import datetime, timezone, timedelta
+from collections import defaultdict
+
+login_attempts = defaultdict(list)
+
+def check_rate_limit(login):
+    now = datetime.now(timezone.utc)
+    window = now - timedelta(minutes=1)
+
+    login_attempts[login] = [t for t in login_attempts[login] if t > window]
+    if len(login_attempts[login]) >= 5:
+        return False
+    return True
+
+def record_failed_attempt(login):
+    login_attempts[login].append(datetime.now(timezone.utc))
+
 
 def get_current_user():
     auth = request.headers.get("Authorization", "")
@@ -257,9 +273,15 @@ def logging_in():
     login = data["login"]
     password = data["password"]
 
+    if not check_rate_limit(login):
+        return jsonify({"error": "too many attempts", "field": None}), 429
+
     user = User.query.filter_by(login=login).first()
     if not user or not bcrypt.checkpw(password.encode(), user.password_hash.encode()):
+        record_failed_attempt(login)
         return jsonify({"error": "unauthorized", "field": None}), 401
+
+    login_attempts[login] = []
 
     expires = int(os.environ.get("JWT_EXPIRES_MIN", 5))
     token = jwt.encode(
