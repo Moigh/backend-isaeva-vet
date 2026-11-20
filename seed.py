@@ -21,6 +21,7 @@ with app.app_context():
         {"login": "petr",   "name": "Пётр",   "password": "pass123"},
         {"login": "anna",   "name": "Анна",   "password": "pass123"},
         {"login": "maria",  "name": "Мария",  "password": "pass123"},
+        {"login": "admin", "name": "Admin", "password": "admin", "role": "admin"},
     ]
     users = []
     for u in users_data:
